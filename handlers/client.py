@@ -35,4 +35,4 @@ def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_help, lambda message: 'help' in message.text)
     dp.register_message_handler(command_working_mode, lambda message: 'Режим-работы' in message.text)
     dp.register_message_handler(command_location, lambda message: 'Расположение' in message.text)
-    dp.register_message_handler(empty)
+    # dp.register_message_handler(empty)
