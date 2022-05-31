@@ -4,6 +4,7 @@ from aiogram import types, Dispatcher
 from create_bot import dp , bot
 from aiogram.dispatcher.filters import Text
 from keyboards import kb_admin
+from database import sqlite_db
 ID = None
 
 class FSMAdmin(StatesGroup):
@@ -22,7 +23,7 @@ async def make_change_command(message: types.Message):
 # Начало диалога и загрузки пунка меню
 # @dp.message_handler(commands='Загрузить', state=None)
 async  def cm_start(message : types.Message):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         await FSMAdmin.photo.set()
         await message.reply('Загрузите фото')
 
@@ -30,7 +31,7 @@ async  def cm_start(message : types.Message):
 # @dp.message_handler(state="*", commands=['Отмена'])  # * - любое состояние бота
 # @dp.message_handler(Text(equals='Отмена', ignore_case=True), state="*")
 async def cancel_handler(message: types.Message, state: FSMContext):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         current_state = await state.get_state()
         if current_state is None:
             return
@@ -40,7 +41,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 # Ловим первый ответ от пользователя
 # @dp.message_handler(content_types=['photo'], state=FSMAdmin.photo)
 async def load_photo(message: types.Message, state: FSMContext):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         async  with state.proxy() as data:
             data['photo'] = message.photo[0].file_id
             await FSMAdmin.next()
@@ -49,7 +50,7 @@ async def load_photo(message: types.Message, state: FSMContext):
 # Ловим второй ответ от пользователя
 # @dp.message_handler(state=FSMAdmin.name)
 async def load_name(message: types.Message, state: FSMContext):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         async with state.proxy() as data:
             data['name'] = message.text
             await FSMAdmin.next()
@@ -58,7 +59,7 @@ async def load_name(message: types.Message, state: FSMContext):
 # Ловим третий ответ от пользователя
 # @dp.message_handler(state=FSMAdmin.description)
 async  def load_description(message: types.Message, state: FSMContext):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         async with state.proxy() as data:
             data['description'] = message.text
             await  FSMAdmin.next()
@@ -67,12 +68,13 @@ async  def load_description(message: types.Message, state: FSMContext):
 # Ловим четверытй ответ от пользователя
 # @dp.message_handler(state=FSMAdmin.price)
 async def load_price(message: types.Message, state: FSMContext):
-    # if message.from_user.id == ID:
+    if message.from_user.id == ID:
         async with state.proxy() as data:
             data['price'] = message.text
 
-        async with state.proxy() as data:
-            await message.reply(str(data))
+        await sqlite_db.sql_add_command(state)
+        # async with state.proxy() as data:
+        #     await message.reply(str(data))
         await state.finish()  # Выход из машинного состояния и очистка всего
 
 

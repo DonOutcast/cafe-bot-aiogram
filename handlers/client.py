@@ -1,6 +1,7 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
 from keyboards import kb_client
+from database import sqlite_db
 
 # @dp.message_handler(commands=['start'])
 async def command_start(message: types.Message):
@@ -29,10 +30,15 @@ async def empty(message: types.Message):
     await message.answer("Такой команды нетту!", reply_markup=kb_client)
     await message.delete()
 
+# @dp.message_handler(lambda message:  'Меню' in message.text)
+async def command_menu(message: types.Message):
+    await sqlite_db.sql_read(message)
+
 
 def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_start, lambda message: 'start' in message.text)
     dp.register_message_handler(command_help, lambda message: 'help' in message.text)
     dp.register_message_handler(command_working_mode, lambda message: 'Режим-работы' in message.text)
     dp.register_message_handler(command_location, lambda message: 'Расположение' in message.text)
+    dp.register_message_handler(command_menu, lambda message: 'Меню' in message.text)
     # dp.register_message_handler(empty)

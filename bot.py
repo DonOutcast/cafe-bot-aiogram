@@ -1,10 +1,13 @@
-from aiogram import executor
+from aiogram.utils import executor
 from create_bot import  dp
+from database import sqlite_db
+
 
 async def on_starttup(_):
     print("Бот запущен")
-from handlers import client, admin, other
+    sqlite_db.sql_start()
 
+from handlers import client, admin, other
 client.register_handlers_clietn(dp)
 admin.register_handlers_admin(dp)
 other.register_handlers_other(dp)
