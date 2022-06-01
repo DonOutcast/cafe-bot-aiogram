@@ -8,8 +8,8 @@ async def on_starttup(_):
     sqlite_db.sql_start()
 
 from handlers import client, admin, other
-client.register_handlers_clietn(dp)
 admin.register_handlers_admin(dp)
+client.register_handlers_clietn(dp)
 other.register_handlers_other(dp)
 # Запускаем лонг поллинг
 
