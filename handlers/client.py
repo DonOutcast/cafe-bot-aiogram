@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
-from keyboards import kb_client
+from keyboards import kb_client, kb_menu, kb_back
 from database import sqlite_db
 
 # @dp.message_handler(commands=['start'])
@@ -32,8 +32,53 @@ async def empty(message: types.Message):
 
 # @dp.message_handler(lambda message:  'Меню' in message.text)
 async def command_menu(message: types.Message):
+    await message.answer("Просмотрите меню", reply_markup=kb_menu)
     await sqlite_db.sql_read(message)
 
+@dp.message_handler(lambda message: 'Первые блюда' in message.text)
+async def command_first_dish(message: types.Message):
+    await message.reply("Это первые блюда", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Вторые блюда' in message.text)
+async def command_second_dish(message: types.Message):
+    await message.reply("Это вторые блюда", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Напитки' in message.text)
+async def command_drinks(message: types.Message):
+    await message.reply(" Это напитки", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Салаты' in message.text)
+async def command_salad(message: types.Message):
+    await message.reply("Это салаты", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Мучные изделия' in message.text)
+async def command_flour_products(message: types.Message):
+    await message.reply("Это мучные изделия", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Десcерты' in message.text)
+async def command_desserts(message: types.Message):
+    await message.reply("Это дессерты", reply_markup=kb_back)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Назад' in message.text)
+async def command_back(message: types.Message):
+    await message.reply("Возврат в основное меню", reply_markup=kb_menu)
+    await message.delete()
+
+@dp.message_handler(lambda message: 'Оформить заказ' in message.text)
+async def command_create_order(message: types.Message):
+    await message.reply("Выбирите позиции из меню")
+    await message.delete()
+
+@dp.message_handler(lambda message: "Перейти к оплате" in message.text)
+async def command_pay_order(message: types.Message):
+    await message.reply("Отправьте чек об оплате нашему Администратору!")
+    await message.delete()
 
 def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_start, lambda message: 'start' in message.text)
