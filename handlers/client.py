@@ -53,6 +53,7 @@ async def command_drinks(message: types.Message):
 @dp.message_handler(lambda message: 'Салаты' in message.text)
 async def command_salad(message: types.Message):
     await message.reply("Это салаты", reply_markup=kb_back)
+    await sqlite_db.sql_read3(message)
     await message.delete()
 
 @dp.message_handler(lambda message: 'Мучные изделия' in message.text)

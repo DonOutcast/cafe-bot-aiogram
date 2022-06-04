@@ -13,7 +13,9 @@ class FSMAdmin(StatesGroup):
     photo = State()
     name = State()
     description = State()
+    types_dish = State()
     price = State()
+
 
 # dp.message_handler(commands=['moderator'], is_chat_admin=True)
 async def make_change_command(message: types.Message):
@@ -58,6 +60,8 @@ async def load_name(message: types.Message, state: FSMContext):
             await FSMAdmin.next()
             await message.reply("Введите описание :")
 
+
+
 # Ловим третий ответ от пользователя
 # @dp.message_handler(state=FSMAdmin.description)
 async  def load_description(message: types.Message, state: FSMContext):
@@ -65,9 +69,18 @@ async  def load_description(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data['description'] = message.text
             await  FSMAdmin.next()
-            await message.reply("Теперь укажите цену :")
+            await message.reply("Теперь укажите вид блюда :")
 
-# Ловим четверытй ответ от пользователя
+#Ловим четвертый ответ от польщователя
+# @dp.message_handler(state=FSMAdmin.types_dish)
+async def load_types_dish(message: types.Message, state: FSMContext):
+    if message.from_user.id == ID:
+        async with state.proxy() as data:
+            data['types_dish'] = message.text
+            await FSMAdmin.next()
+            await message.reply("Теперь укажите цену")
+
+# Ловим пятый ответ от пользователя
 # @dp.message_handler(state=FSMAdmin.price)
 async def load_price(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
@@ -102,6 +115,7 @@ def register_handlers_admin(dp : Dispatcher):
     dp.register_message_handler(cancel_handler, Text(equals='Отмена', ignore_case=True), state="*")
     dp.register_message_handler(load_photo, content_types=['photo'], state=FSMAdmin.photo)
     dp.register_message_handler(load_name, state=FSMAdmin.name)
+    dp.register_message_handler(load_types_dish, state=FSMAdmin.types_dish)
     dp.register_message_handler(load_description, state=FSMAdmin.description)
     dp.register_message_handler(load_price, state=FSMAdmin.price)
     dp.register_message_handler(make_change_command, lambda message: 'moderator' in message.text, is_chat_admin=True)
