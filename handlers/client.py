@@ -38,22 +38,25 @@ async def command_menu(message: types.Message):
 @dp.message_handler(lambda message: 'Первые блюда' in message.text)
 async def command_first_dish(message: types.Message):
     await message.reply("Это первые блюда", reply_markup=kb_back)
+    await sqlite_db.sql_first_dish(message)
     await message.delete()
 
 @dp.message_handler(lambda message: 'Вторые блюда' in message.text)
 async def command_second_dish(message: types.Message):
     await message.reply("Это вторые блюда", reply_markup=kb_back)
+    await sqlite_db.sql_second_dish(message)
     await message.delete()
 
 @dp.message_handler(lambda message: 'Напитки' in message.text)
 async def command_drinks(message: types.Message):
     await message.reply(" Это напитки", reply_markup=kb_back)
+    await sqlite_db.sql_drinks(message)
     await message.delete()
 
 @dp.message_handler(lambda message: 'Салаты' in message.text)
 async def command_salad(message: types.Message):
     await message.reply("Это салаты", reply_markup=kb_back)
-    await sqlite_db.sql_read3(message)
+    await sqlite_db.sql_salad(message)
     await message.delete()
 
 @dp.message_handler(lambda message: 'Мучные изделия' in message.text)

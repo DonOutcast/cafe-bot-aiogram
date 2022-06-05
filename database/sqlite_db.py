@@ -24,9 +24,22 @@ async def sql_read(message):
 async def sql_read2():
     return cur.execute("SELECT * FROM menu").fetchall()
 
-async def sql_read3(message):
+async def sql_salad(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Салаты'").fetchall():
         await bot.send_photo(message.from_user.id, ret[0],f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}' )
+
+async def sql_first_dish(message):
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Первое блюдо'").fetchall():
+      await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+
+async def sql_second_dish(message):
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Второе блюдо'").fetchall():
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+
+async def sql_drinks(message):
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Напитки").fetchall():
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+
 
 async def sql_delete_command(data):
     cur.execute('DELETE FROM menu WHERE name == ?', (data,))
