@@ -37,7 +37,15 @@ async def sql_second_dish(message):
         await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
 
 async def sql_drinks(message):
-    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Напитки").fetchall():
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Напитки'  ").fetchall():
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+
+async def sql_flour_products(message):
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Мучное изделие' ").fetchall():
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+
+async def sql_desserts(message):
+    for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Дессерт' ").fetchall():
         await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
 
 

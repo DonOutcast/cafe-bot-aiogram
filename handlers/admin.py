@@ -1,9 +1,11 @@
+import doctest
+
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import dp , bot
 from aiogram.dispatcher.filters import Text
-from keyboards import kb_admin
+from keyboards import kb_admin, menu_admin
 from database import sqlite_db
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -69,7 +71,8 @@ async  def load_description(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data['description'] = message.text
             await  FSMAdmin.next()
-            await message.reply("Теперь укажите вид блюда :")
+            await message.reply("Теперь укажите вид блюда :", reply_markup=menu_admin)
+
 
 #Ловим четвертый ответ от польщователя
 # @dp.message_handler(state=FSMAdmin.types_dish)
@@ -106,8 +109,20 @@ async  def delete_item(message: types.Message):
             await bot.send_message(message.from_user.id, text='^^^', reply_markup=InlineKeyboardMarkup().\
                 add(InlineKeyboardButton(f'Удалить {ret[1]}', callback_data=f'del {ret[1]}')))
 
-
-
+#
+# @dp.callback_query_handler(text=["Первое блюдо"])
+# async def process_callback_button1(call: types.CallbackQuery):
+#     if call.data == "Первое блюдо":
+#         # await bot.answer_callback_query(callback_query.id)
+#         await bot.send_message(callback_query.from_user.id, 'Первое блюдo')
+#     elif call.data == "Второе":
+#         # await bot.answer_callback_query(callback_query.id)
+#         await bot.send_message(callback_query.from_user.id, 'Второе блюдо')
+#     await call.answer()
+@dp.callback_query_handler(text="button_first_dish")
+async def first_dish_command(message: types.Message):
+    await bot.delete_message(message.from_user.id, message.message.message_id)
+    await baot.send_message(message.from_user.id, "Первое блюдо")
 def register_handlers_admin(dp : Dispatcher):
     dp.register_message_handler(cm_start, lambda message:  'Загрузить' in message.text, state=None)
     dp.register_message_handler(cm_start, Text(equals='Загрузить', ignore_case=True), state=None)
