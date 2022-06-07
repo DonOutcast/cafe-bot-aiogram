@@ -3,16 +3,21 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 from create_bot import dp , bot
 from aiogram.dispatcher.filters import Text
-from keyboards import kb_admin, menu_admin
+from keyboards import *
 from database import sqlite_db
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 ID = None
 
+class FSMCalculation(StatesGroup):
+    name = State()
+    count_dish = State()
+    count_ingrid = State()
+    ingrid = State()
+
 class FSMFixed(StatesGroup):
     new_name = State()
     new_price = State()
-
 
 class FSMAdmin(StatesGroup):
     photo = State()
@@ -33,7 +38,7 @@ async def make_change_command(message: types.Message):
 async  def cm_start(message : types.Message):
     if message.from_user.id == ID:
         await FSMAdmin.photo.set()
-        await message.reply('Загрузите фото')
+        await message.reply('Загрузите фото', reply_markup=kb_admin_back_cancel)
 
 #Выход из состояния
 # @dp.message_handler(state="*", commands=['Отмена'])  # * - любое состояние бота
@@ -44,7 +49,19 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         if current_state is None:
             return
         await  state.finish()
-        await message.reply("Ok")
+        await message.reply("OK")
+
+@dp.message_handler(state="*", commands=["Назад"])
+@dp.message_handler(Text(equals='Назад', ignore_case=True), state="*")
+async def back_handler(message: types.Message, state: FSMContext):
+    if message.from_user.id == ID:
+        current_state = await state.get_state()
+        if current_state is None:
+            await message.reply("Вы вернулись в гловное меню модератора", reply_markup=kb_admin)
+            return
+    await state.finish()
+    await message.reply("Вы верунлись в меню модератора", reply_markup=kb_admin)
+    await message.delete()
 
 # Ловим первый ответ от пользователя
 # @dp.message_handler(content_types=['photo'], state=FSMAdmin.photo)
@@ -162,17 +179,17 @@ async def dessert_command(message: types.Message, state: FSMContext):
 async def flour_products_command(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['types_dish'] = 'Мучное изделие'
-    await bot.send_message(message.from_user.id, "Теперь увкажите цену")
+    await bot.send_message(message.from_user.id, "Теперь укажите цену")
     await FSMAdmin.next()
 
-@dp.message_handler(lambda message: "Изменить" in message.text, state=None)
+@dp.message_handler(lambda message: "Редактировать меню" in message.text, state=None)
 async def set_command(message: types.Message):
     if message.from_user.id == ID:
         await FSMFixed.new_name.set()
-        await message.reply( "Введите название блюда для измения")
+        await message.reply( "Введите название блюда для измения", reply_markup=kb_admin_back_cancel)
 
-# @dp.message_handler(state="*", commands=['Отмена'])  # * - любое состояние бота
-# @dp.message_handler(Text(equals='Отмена', ignore_case=True), state="*")
+@dp.message_handler(state="*", commands=['Отмена'])  # * - любое состояние бота
+@dp.message_handler(Text(equals='Отмена', ignore_case=True), state="*")
 async def cancel_handler_change(message: types.Message, state: FSMContext):
     if message.from_user.id == ID:
         current_state = await state.get_state()

@@ -2,11 +2,18 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardBut
 
 button_load = KeyboardButton('Загрузить')
 button_delete = KeyboardButton('Удалить')
-button_fixed = KeyboardButton('Изменить')
+button_fixed = KeyboardButton('Редактировать меню')
+button_cancel = KeyboardButton("Отмена")
+button_back = KeyboardButton("Назад")
+button_calculation = KeyboardButton("Калькуляция")
 
-kb_admin = ReplyKeyboardMarkup(resize_keyboard=True)#, one_time_keyboard=True)
 
-kb_admin.add(button_load).add(button_delete).add(button_fixed)
+kb_admin_back_cancel = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+kb_admin_back_cancel.add(button_back, button_cancel)
+
+kb_admin = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)#, one_time_keyboard=True)
+
+kb_admin.add(button_load).insert(button_delete).add(button_fixed).insert(button_calculation)
 
 menu_admin = InlineKeyboardMarkup(row_width=2)
 button_first_dish = InlineKeyboardButton(text='Перове блюдо', callback_data='button_first_dish')
