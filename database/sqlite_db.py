@@ -8,7 +8,7 @@ def sql_start():
     cur = base.cursor()
     if base:
         print('Data base connected OK!')
-    base.execute('CREATE TABLE IF NOT EXISTS menu(img TEXT, name TEXT PRIMARY KEY, description TEXT, types_dish TEXT, price TEXT)')
+    base.execute('CREATE TABLE IF NOT EXISTS menu(img TEXT, name TEXT PRIMARY KEY, description TEXT, types_dish TEXT, price INT)')
     base.commit()
 
 async def sql_add_command(state):
@@ -48,7 +48,8 @@ async def sql_desserts(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Дессерт' ").fetchall():
         await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
 
-
+async def rename_price(new_price, new_name):
+    cur.execute("UPDATE menu SET price = "+new_price +" WHERE name = "+new_name)
 async def sql_delete_command(data):
     cur.execute('DELETE FROM menu WHERE name == ?', (data,))
     base.commit()

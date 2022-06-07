@@ -108,4 +108,4 @@ def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_create_order, lambda message: 'Оформить заказ' in message.text)
     dp.register_message_handler(command_pay_order, lambda message: "Перейти к оплате" in message.text)
 
-    dp.register_message_handler(empty)
+    # dp.register_message_handler(empty)
