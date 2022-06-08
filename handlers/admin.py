@@ -204,7 +204,6 @@ async def fixed_command(message: types.Message, state: FSMContext):
         # await bot.send_message(message.from_user.id, "Введите название блюда для измения")
         async with state.proxy() as data:
             data['new_name'] = message.text
-
         await FSMFixed.next()
         await message.reply("Введите новую цену")
 

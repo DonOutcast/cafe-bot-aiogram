@@ -1,11 +1,14 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
-from keyboards import kb_client, kb_menu, kb_back, menu_admin
+from keyboards import *
 from database import sqlite_db
 
+ID = None
 # @dp.message_handler(commands=['start'])
 async def command_start(message: types.Message):
     try:
+        global  ID
+        ID = message.from_user.id
         await bot.send_message(message.from_user.id,"Добро пожаловать!\nЭтот бот в разработке", reply_markup=kb_client)
         await message.delete()
     except:
@@ -18,7 +21,7 @@ async def command_help(message: types.Message):
 
 # @dp.message_handler(commands=['Режим-работы'])
 async def command_working_mode(message: types.Message):
-    await bot.send_message(message.from_user.id ,"Круглосуточно!")
+    await bot.send_message(message.from_user.id ,"Круглосуточно!", reply_markup=menu_clietn)
     await message.delete()
 # @dp.message_handler(commands=['Расположение'])
 async def command_location(message: types.Message):
@@ -77,10 +80,11 @@ async def command_desserts(message: types.Message):
     await sqlite_db.sql_desserts(message)
     await message.delete()
 
-# @dp.message_handler(lambda message: 'Назад' in message.text)
+# @dp.message_handler(lambda message: 'Вернуться' in message.text)
 async def command_back(message: types.Message):
-    await message.reply("Возврат в основное меню", reply_markup=kb_menu)
-    await message.delete()
+    if message.from_user.id == ID:
+        await message.reply("Возврат в основное меню", reply_markup=kb_menu)
+        await message.delete()
 
 # @dp.message_handler(lambda message: 'Оформить заказ' in message.text)
 async def command_create_order(message: types.Message):
@@ -91,6 +95,14 @@ async def command_create_order(message: types.Message):
 async def command_pay_order(message: types.Message):
     await message.reply("Отправьте чек об оплате нашему Администратору!")
     await message.delete()
+
+# @dp.callback_query_handler(text="button_buy")
+# async def buy_command(message: types.Message):
+#     await bot.send_message(message.from_user.id, "Вы нажали купить",reply_markup=menu_client_with_plus_minus)
+
+@dp.callback_query_handler(lambda call: "button_buy" in call.data)
+async def next_keyboard(call):
+    await call.message.edit_reply_markup(menu_client_with_plus_minus)
 
 def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_start, lambda message: 'start' in message.text)
@@ -104,7 +116,7 @@ def register_handlers_clietn(dp: Dispatcher):
     dp.register_message_handler(command_salad, lambda message: 'Салаты' in message.text)
     dp.register_message_handler(command_flour_products, lambda message: 'Мучные изделия' in message.text)
     dp.register_message_handler(command_desserts, lambda message: 'Десcерты' in message.text)
-    dp.register_message_handler(command_back, lambda message: 'Назад' in message.text)
+    dp.register_message_handler(command_back, lambda message: 'Вернуться' in message.text)
     dp.register_message_handler(command_create_order, lambda message: 'Оформить заказ' in message.text)
     dp.register_message_handler(command_pay_order, lambda message: "Перейти к оплате" in message.text)
 

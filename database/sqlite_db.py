@@ -1,6 +1,6 @@
 import sqlite3 as sq
 from create_bot import bot
-
+from keyboards import *
 
 def sql_start():
     global base, cur
@@ -30,26 +30,26 @@ async def sql_salad(message):
 
 async def sql_first_dish(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Первое блюдо'").fetchall():
-      await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+      await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}', reply_markup=menu_client)
 
 async def sql_second_dish(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Второе блюдо'").fetchall():
-        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}', reply_markup=menu_client)
 
 async def sql_drinks(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Напитки'  ").fetchall():
-        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}', reply_markup=menu_clietn)
 
 async def sql_flour_products(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Мучное изделие' ").fetchall():
-        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}', reply_markup=menu_clietn)
 
 async def sql_desserts(message):
     for ret in cur.execute("SELECT * FROM menu WHERE types_dish LIKE 'Дессерт' ").fetchall():
-        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}')
+        await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nОписание: {ret[2]}\nЦена {ret[-1]}', reply_markup=menu_client)
 
 async def rename_price(new_price, new_name):
-    cur.execute("UPDATE menu SET price = "+new_price +" WHERE name = "+new_name)
+    cur.execute("UPDATE menu SET price = "+new_price +" WHERE name = "+"'"+new_name+"'")
 async def sql_delete_command(data):
     cur.execute('DELETE FROM menu WHERE name == ?', (data,))
     base.commit()
